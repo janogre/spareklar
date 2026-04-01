@@ -1,0 +1,26 @@
+{
+  "electricity": {
+    "partnerName": "Tibber",
+    "url": "https://invite.tibber.com/spareklar",
+    "cta": "Bytt strømleverandør",
+    "category": "Strøm"
+  },
+  "loans": {
+    "partnerName": "Lendo",
+    "url": "https://www.lendo.no/?ref=spareklar",
+    "cta": "Refinansier lånet ditt",
+    "category": "Lån"
+  },
+  "mobile": {
+    "partnerName": "Telepris",
+    "url": "https://www.telepris.no/?ref=spareklar",
+    "cta": "Finn billigere mobilabonnement",
+    "category": "Mobil/Bredbånd"
+  },
+  "insurance": {
+    "partnerName": "Uno",
+    "url": "https://www.uno.no/?ref=spareklar",
+    "cta": "Sammenlign forsikringer",
+    "category": "Forsikring"
+  }
+}
