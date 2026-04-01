@@ -19,9 +19,8 @@ test.describe("Mobile viewport — 375px", () => {
     const bodyWidth = await page.evaluate(() => document.body.scrollWidth);
     expect(bodyWidth, "Horizontal scroll detected — fix overflow").toBeLessThanOrEqual(375);
 
-    // Main input (textarea or file upload) should be visible
-    const inputArea = page.locator("textarea").first()
-      .or(page.locator('input[type="file"]').first());
+    // Main textarea input should be visible
+    const inputArea = page.locator("textarea").first();
     await expect(inputArea).toBeVisible();
 
     // Analyser button should be visible
@@ -79,6 +78,7 @@ test.describe("Mobile viewport — 375px", () => {
   });
 
   test("recommendation cards stack vertically on mobile", async ({ page }) => {
+    test.skip(!process.env.ANTHROPIC_API_KEY, "Requires ANTHROPIC_API_KEY");
     await page.goto("/");
 
     const textarea = page.locator("textarea").first();

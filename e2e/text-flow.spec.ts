@@ -9,10 +9,14 @@ Mobilabonnement Telenor: 499 kr/mnd
 Mathandel: 7500 kr/mnd
 `.trim();
 
+// Full analyze-flow tests require a live ANTHROPIC_API_KEY. Skip in CI unless key is provided.
+const HAS_API_KEY = !!process.env.ANTHROPIC_API_KEY;
+
 test.describe("Text input flow", () => {
   test("paste text → analyze → report renders with recommendations", async ({
     page,
   }) => {
+    test.skip(!HAS_API_KEY, "Requires ANTHROPIC_API_KEY");
     await page.goto("/");
 
     // Landing page should be visible
@@ -53,6 +57,7 @@ test.describe("Text input flow", () => {
   });
 
   test("share card generates after analysis", async ({ page }) => {
+    test.skip(!HAS_API_KEY, "Requires ANTHROPIC_API_KEY");
     await page.goto("/");
 
     const textarea = page.locator("textarea").first();
@@ -105,12 +110,13 @@ test.describe("Text input flow", () => {
       await analyseButton.click();
 
       // An error message should appear in Norwegian
+      // Actual error text: "Lim inn transaksjonsdata eller last opp en fil."
+      // Use a precise match that doesn't collide with the description text
       await expect(
         page
-          .getByText(/skriv inn/i)
-          .or(page.getByText(/feil/i))
-          .or(page.getByText(/påkrevd/i))
+          .getByText(/transaksjonsdata/i)
           .or(page.locator('[data-testid="error-message"]'))
+          .or(page.locator("p.text-red-600"))
       ).toBeVisible({ timeout: 5_000 });
     }
   });
