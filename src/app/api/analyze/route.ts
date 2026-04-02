@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { analyzeTransactions } from "@/lib/claude";
 import { parseCSV, parsePDF } from "@/lib/parsers";
+import { kv } from "@/lib/kv";
 
 export const maxDuration = 60;
 
@@ -82,6 +83,8 @@ export async function POST(request: NextRequest) {
 
   try {
     const result = await analyzeTransactions(transactionText);
+    // Fire-and-forget: increment report counter. Never block the response on this.
+    kv.incr("stats:reports_generated").catch(() => undefined);
     return NextResponse.json(result);
   } catch (claudeError) {
     if (claudeError instanceof Error) {

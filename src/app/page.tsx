@@ -1,4 +1,19 @@
+export const dynamic = "force-dynamic";
+
 import InputForm from "@/components/InputForm";
+import TrustBadge from "@/components/TrustBadge";
+import PrivacyBadge from "@/components/PrivacyBadge";
+import { kv } from "@/lib/kv";
+import { testimonials } from "@/config/testimonials";
+
+async function getReportCount(): Promise<number> {
+  try {
+    const count = await kv.get<number>("stats:reports_generated");
+    return count ?? 0;
+  } catch {
+    return 0;
+  }
+}
 
 function ShieldIcon() {
   return (
@@ -24,9 +39,12 @@ function GiftIcon() {
   );
 }
 
-export default function Home() {
+export default async function Home() {
+  const reportCount = await getReportCount();
+
   return (
     <div className="space-y-8">
+      {/* Hero */}
       <div className="text-center space-y-4">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight tracking-tight">
           Finn ut hva du kan spare —{" "}
@@ -38,8 +56,10 @@ export default function Home() {
         </p>
       </div>
 
-      <InputForm />
+      {/* Trust badge — report counter */}
+      <TrustBadge count={reportCount} />
 
+      {/* Trust grid */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="flex flex-col items-center gap-2 rounded-xl bg-white border border-gray-100 shadow-sm px-4 py-4 text-center">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-50">
@@ -62,6 +82,32 @@ export default function Home() {
           <p className="text-sm font-semibold text-gray-800">Helt gratis, ingen konto</p>
           <p className="text-xs text-gray-400">Ingen registrering kreves</p>
         </div>
+      </div>
+
+      {/* Testimonials */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {testimonials.map((t) => (
+          <div
+            key={t.name}
+            className="rounded-2xl bg-white border border-gray-100 shadow-sm p-5 flex flex-col gap-3"
+          >
+            <p className="text-sm text-gray-600 leading-relaxed">
+              &ldquo;{t.quote}&rdquo;
+            </p>
+            <div className="mt-auto">
+              <p className="text-sm font-semibold text-gray-900">{t.name}</p>
+              <p className="text-xs text-gray-400">{t.location}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Input form */}
+      <InputForm />
+
+      {/* Privacy badge */}
+      <div className="flex justify-center">
+        <PrivacyBadge />
       </div>
     </div>
   );
