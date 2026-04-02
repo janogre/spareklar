@@ -13,6 +13,10 @@ const CATEGORY_LABELS: Record<string, string> = {
   loans: "Lån",
   mobile: "Mobil/Bredbånd",
   insurance: "Forsikring",
+  subscriptions: "Abonnementer",
+  savings: "Sparing",
+  credit_card: "Kredittkort",
+  food: "Mat",
   other: "Annet",
 };
 
@@ -21,6 +25,10 @@ const CATEGORY_COLORS: Record<string, string> = {
   loans: "bg-blue-50 border-blue-200 text-blue-700",
   mobile: "bg-purple-50 border-purple-200 text-purple-700",
   insurance: "bg-green-50 border-green-200 text-green-700",
+  subscriptions: "bg-pink-50 border-pink-200 text-pink-700",
+  savings: "bg-emerald-50 border-emerald-200 text-emerald-700",
+  credit_card: "bg-orange-50 border-orange-200 text-orange-700",
+  food: "bg-lime-50 border-lime-200 text-lime-700",
   other: "bg-gray-50 border-gray-200 text-gray-700",
 };
 
@@ -29,6 +37,10 @@ const CATEGORY_BORDER: Record<string, string> = {
   loans: "border-l-blue-500",
   mobile: "border-l-purple-500",
   insurance: "border-l-green-500",
+  subscriptions: "border-l-pink-400",
+  savings: "border-l-emerald-500",
+  credit_card: "border-l-orange-400",
+  food: "border-l-lime-500",
   other: "border-l-gray-300",
 };
 
