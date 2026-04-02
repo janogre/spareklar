@@ -12,18 +12,31 @@ VIKTIG:
 - Unngå generiske råd som ikke er forankret i dataen. Kun anbefale kategorier som faktisk er representert
 - Hvis en kategori ikke finnes i dataen, IKKE anbefal den
 
+Kategorier: electricity (strøm), loans (lån/renter), mobile (mobil/data), insurance (forsikring), subscriptions (Netflix, Viaplay, Spotify, SATS, gym), savings (sparekonto, BSU, fond), credit_card (kredittkort-renter/gebyr), food (dagligvare, take-away), other (annet)
+
+I tillegg til anbefalingene, analyser de totale månedlige utgiftene og returner en "spendingBreakdown" array med kategorier som faktisk finnes i dataen. Beløpene skal summere til omtrent totalMonthlySpendNOK. Inkluder kun kategorier med faktiske transaksjoner.
+
 Svar KUN med gyldig JSON:
 {
   "totalEstimatedSavingsNOK": number,
+  "totalMonthlySpendNOK": number,
+  "spendingBreakdown": [
+    {
+      "category": "electricity|loans|mobile|insurance|subscriptions|savings|credit_card|food|other",
+      "labelNO": "string (norsk visningsnavn, eks: \\"Mat og dagligvare\\")",
+      "amountNOK": number,
+      "percentage": number
+    }
+  ],
   "recommendations": [
     {
       "rank": number,
-      "category": "electricity|loans|mobile|insurance|other",
+      "category": "electricity|loans|mobile|insurance|subscriptions|savings|credit_card|food|other",
       "action": "string (kort, handlingsorientert)",
       "reason": "string (én setning med konkret referanse til brukerens transaksjoner)",
       "specific_transactions": ["string (eks: \\"Netflix 179 kr/mnd, Viaplay 269 kr/mnd\\")"],
       "estimatedSavingsNOK": number,
-      "affiliateKey": "electricity|loans|mobile|insurance|null"
+      "affiliateKey": "electricity|loans|mobile|insurance|subscriptions|savings|credit_card|food|null"
     }
   ],
   "positives": ["string (hva brukeren gjør bra, med konkret referanse)"],
@@ -41,11 +54,36 @@ export interface Recommendation {
   affiliateKey: string | null;
 }
 
+export interface SpendingCategory {
+  category: string;
+  labelNO: string;
+  amountNOK: number;
+  percentage: number;
+}
+
 export interface AnalysisResult {
   totalEstimatedSavingsNOK: number;
+  totalMonthlySpendNOK?: number;
+  spendingBreakdown?: SpendingCategory[];
   recommendations: Recommendation[];
   positives: string[];
   no_change_needed: string[];
+}
+
+/** Renders spendingBreakdown as an HTML table for email templates (no Recharts needed). */
+export function spendingBreakdownToHtml(
+  breakdown: SpendingCategory[]
+): string {
+  if (!breakdown || breakdown.length === 0) return "";
+  const rows = breakdown
+    .map(
+      (c) =>
+        `<tr><td style="padding:4px 12px 4px 0">${c.labelNO}</td>` +
+        `<td style="padding:4px 0;text-align:right">${c.amountNOK.toLocaleString("nb-NO")} kr</td>` +
+        `<td style="padding:4px 0 4px 12px;text-align:right;color:#6b7280">${c.percentage}%</td></tr>`
+    )
+    .join("");
+  return `<table style="border-collapse:collapse;font-size:14px;width:100%">${rows}</table>`;
 }
 
 export async function analyzeTransactions(

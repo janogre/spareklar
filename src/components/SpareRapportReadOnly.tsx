@@ -1,7 +1,10 @@
+import dynamic from "next/dynamic";
 import type { AnalysisResult } from "@/lib/claude";
 import RecommendationCard from "./RecommendationCard";
 import PrivacyBadge from "./PrivacyBadge";
 import Link from "next/link";
+
+const ExpenseChart = dynamic(() => import("./ExpenseChart"), { ssr: false });
 
 interface Props {
   result: AnalysisResult;
@@ -22,6 +25,14 @@ export default function SpareRapportReadOnly({ result }: Props) {
         </p>
         <p className="text-gray-500">potensielle besparelser per år</p>
       </div>
+
+      {/* Expense breakdown chart */}
+      {result.spendingBreakdown && result.spendingBreakdown.length > 0 && (
+        <ExpenseChart
+          data={result.spendingBreakdown}
+          totalMonthlySpendNOK={result.totalMonthlySpendNOK ?? 0}
+        />
+      )}
 
       {/* Recommendations */}
       <div className="space-y-4">

@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import type { AnalysisResult } from "@/lib/claude";
 import RecommendationCard from "./RecommendationCard";
 import ShareCard from "./ShareCard";
 import PrivacyBadge from "./PrivacyBadge";
+
+const ExpenseChart = dynamic(() => import("./ExpenseChart"), { ssr: false });
 
 interface Props {
   result: AnalysisResult;
@@ -60,6 +63,14 @@ export default function SpareRapport({ result }: Props) {
         </p>
         <p className="text-gray-500 text-base">potensielle besparelser per år</p>
       </div>
+
+      {/* Expense breakdown chart */}
+      {result.spendingBreakdown && result.spendingBreakdown.length > 0 && (
+        <ExpenseChart
+          data={result.spendingBreakdown}
+          totalMonthlySpendNOK={result.totalMonthlySpendNOK ?? 0}
+        />
+      )}
 
       {/* Recommendations */}
       <div className="space-y-4">
