@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { track } from "@vercel/analytics";
 import type { AnalysisResult } from "@/lib/claude";
 
 interface Props {
@@ -28,6 +29,7 @@ export default function ShareCard({ result }: Props) {
       link.href = dataUrl;
       link.download = "spareklar-rapport.png";
       link.click();
+      track("share_action", { method: "copy_link" });
     } catch {
       // Silently fail — share is best-effort
     } finally {

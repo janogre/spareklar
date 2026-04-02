@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -33,7 +34,7 @@ export default function RootLayout({
         <main className="max-w-2xl mx-auto px-4 py-8 sm:py-12">
           {children}
         </main>
-        {/* TODO: Re-add Vercel Analytics once upgraded to Next.js 15 + React 19 */}
+        <Analytics />
       </body>
     </html>
   );

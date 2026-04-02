@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@vercel/analytics";
 import type { Recommendation } from "@/lib/claude";
 import { getAffiliate } from "@/lib/affiliates";
 
@@ -63,13 +64,10 @@ export default function RecommendationCard({ recommendation }: Props) {
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2.5 transition-colors"
           onClick={() => {
-            if (typeof window !== "undefined" && "gtag" in window) {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              (window as any).gtag("event", "affiliate_click", {
-                affiliate_key: recommendation.affiliateKey,
-                partner: affiliate.partnerName,
-              });
-            }
+            track("affiliate_click", {
+              category: recommendation.affiliateKey,
+              partner: affiliate.partnerName,
+            });
           }}
         >
           {affiliate.cta}

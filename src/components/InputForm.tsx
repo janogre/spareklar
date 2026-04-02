@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { track } from "@vercel/analytics";
 import Papa from "papaparse";
 import PrivacyBadge from "./PrivacyBadge";
 import LoadingState from "./LoadingState";
@@ -14,6 +15,7 @@ export default function InputForm() {
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [inputSource, setInputSource] = useState<"text" | "csv" | "pdf">("text");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -38,6 +40,8 @@ export default function InputForm() {
       }
 
       const result = await res.json();
+      track("report_generated", { input_type: inputSource });
+      track("input_type", { type: inputSource });
       sessionStorage.setItem("spareRapport", JSON.stringify(result));
       router.push("/rapport");
     } catch (err) {
@@ -74,6 +78,7 @@ export default function InputForm() {
           .map((row) => Object.values(row).join("\t"))
           .join("\n");
         setText(`[CSV-fil: ${file.name}]\n${preview}\n…(${result.data.length} rader totalt)`);
+        setInputSource("csv");
         // Store parsed data in state to send on submit
         // We re-parse inline on submit via text path for simplicity
         // For a production app, store result.data and post as csv inputType
@@ -107,6 +112,8 @@ export default function InputForm() {
       }
 
       const result = await res.json();
+      track("report_generated", { input_type: "pdf" });
+      track("input_type", { type: "pdf" });
       sessionStorage.setItem("spareRapport", JSON.stringify(result));
       router.push("/rapport");
     } catch (err) {
