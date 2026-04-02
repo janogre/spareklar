@@ -1,6 +1,6 @@
 import affiliatesData from "@/config/affiliates.json";
 
-export type AffiliateKey = "electricity" | "loans" | "mobile" | "insurance";
+export type AffiliateKey = "electricity" | "loans" | "mobile" | "insurance" | "subscriptions" | "savings" | "credit_card" | "food";
 
 export interface Affiliate {
   partnerName: string;

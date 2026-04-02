@@ -12,18 +12,29 @@ VIKTIG:
 - Unngå generiske råd som ikke er forankret i dataen. Kun anbefale kategorier som faktisk er representert
 - Hvis en kategori ikke finnes i dataen, IKKE anbefal den
 
+Kategorier og eksempler:
+- electricity: strøm, Tibber, Fjordkraft, Fortum
+- loans: lån, kreditt, renter, avdrag
+- mobile: mobil, bredbånd, Telenor, Telia, ice
+- insurance: forsikring, Gjensidige, If, Fremtind
+- subscriptions: Netflix, Viaplay, Disney+, Spotify, abonnement, HBO
+- savings: BSU, fondssparing, Kron, aksjer, spareform
+- credit_card: kredittkort, Visa, Mastercard, kortgebyr, årsgebyr
+- food: dagligvare, Rema, Kiwi, Meny, Coop, mat, restaurant
+- other: alt annet
+
 Svar KUN med gyldig JSON:
 {
   "totalEstimatedSavingsNOK": number,
   "recommendations": [
     {
       "rank": number,
-      "category": "electricity|loans|mobile|insurance|other",
+      "category": "electricity|loans|mobile|insurance|subscriptions|savings|credit_card|food|other",
       "action": "string (kort, handlingsorientert)",
       "reason": "string (én setning med konkret referanse til brukerens transaksjoner)",
       "specific_transactions": ["string (eks: \\"Netflix 179 kr/mnd, Viaplay 269 kr/mnd\\")"],
       "estimatedSavingsNOK": number,
-      "affiliateKey": "electricity|loans|mobile|insurance|null"
+      "affiliateKey": "electricity|loans|mobile|insurance|subscriptions|savings|credit_card|food|null"
     }
   ],
   "positives": ["string (hva brukeren gjør bra, med konkret referanse)"],
