@@ -1,3 +1,4 @@
+// TODO(GST-26): Confirm correct affiliate URL for "subscriptions" partner (currently strompris.no — awaiting CEO confirmation)
 import affiliatesData from "@/config/affiliates.json";
 
 export type AffiliateKey = "electricity" | "loans" | "mobile" | "insurance" | "subscriptions" | "savings" | "credit_card" | "food";

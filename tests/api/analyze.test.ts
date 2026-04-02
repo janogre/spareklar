@@ -22,11 +22,13 @@ const MOCK_RESULT: AnalysisResult = {
       category: "electricity",
       action: "Bytt til Tibber",
       reason: "Du bruker mer strøm enn gjennomsnittet.",
+      specific_transactions: [],
       estimatedSavingsNOK: 2400,
       affiliateKey: "electricity",
     },
   ],
   positives: ["Du sparer jevnlig – bra!"],
+  no_change_needed: [],
 };
 
 function makeClaudeMessage(text: string) {
