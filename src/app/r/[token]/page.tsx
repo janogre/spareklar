@@ -47,17 +47,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function SharedRapportPage({ params }: PageProps) {
-  let data: StoredReport | null = null;
-  let debugError: string | null = null;
-  try {
-    data = await getReport(params.token);
-  } catch (e) {
-    debugError = String(e);
-  }
-
-  if (debugError) {
-    return <pre style={{color:"red",padding:"1rem",whiteSpace:"pre-wrap"}}>{debugError}</pre>;
-  }
+  const data = await getReport(params.token);
 
   if (!data) {
     return (
@@ -75,9 +65,5 @@ export default async function SharedRapportPage({ params }: PageProps) {
     );
   }
 
-  try {
-    return <SpareRapportReadOnly result={data.result} />;
-  } catch (e) {
-    return <pre style={{color:"red",padding:"1rem",whiteSpace:"pre-wrap"}}>Render error: {String(e)}</pre>;
-  }
+  return <SpareRapportReadOnly result={data.result} />;
 }

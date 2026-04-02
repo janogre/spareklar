@@ -1,20 +1,26 @@
 import { createClient } from "redis";
 
-// Thin wrapper over node-redis that matches the @vercel/kv interface used in
-// this app (kv.set with TTL, kv.get with auto JSON parse/stringify).
-// Uses REDIS_URL env var (standard Redis connection string).
+// Singleton Redis client for Next.js server components.
+// Uses a connection promise to avoid race conditions when generateMetadata
+// and the page component call getClient() concurrently.
 
 type RedisClient = ReturnType<typeof createClient>;
-let _client: RedisClient | null = null;
+let _connectPromise: Promise<RedisClient> | null = null;
 
-async function getClient(): Promise<RedisClient> {
-  if (_client?.isOpen) return _client;
-  _client = createClient({
-    url: process.env.REDIS_URL,
-    socket: { connectTimeout: 5000, reconnectStrategy: false },
-  });
-  await _client.connect();
-  return _client;
+function getClient(): Promise<RedisClient> {
+  if (!_connectPromise) {
+    const client = createClient({
+      url: process.env.REDIS_URL,
+      socket: { connectTimeout: 5000, reconnectStrategy: false },
+    });
+    client.on("error", () => {
+      // Swallow connection errors so they don't become unhandled rejections.
+      // getClient callers will receive a rejection from the connect promise
+      // below if the connection fails.
+    });
+    _connectPromise = client.connect().then(() => client);
+  }
+  return _connectPromise;
 }
 
 interface SetOptions {
