@@ -17,15 +17,26 @@ Kategorier og eksempler:
 - loans: lån, kreditt, renter, avdrag
 - mobile: mobil, bredbånd, Telenor, Telia, ice
 - insurance: forsikring, Gjensidige, If, Fremtind
-- subscriptions: Netflix, Viaplay, Disney+, Spotify, abonnement, HBO
-- savings: BSU, fondssparing, Kron, aksjer, spareform
+- subscriptions: Netflix, Viaplay, Disney+, Spotify, abonnement, HBO, SATS, gym
+- savings: BSU, fondssparing, Kron, aksjer, spareform, sparekonto, fond
 - credit_card: kredittkort, Visa, Mastercard, kortgebyr, årsgebyr
-- food: dagligvare, Rema, Kiwi, Meny, Coop, mat, restaurant
+- food: dagligvare, Rema, Kiwi, Meny, Coop, mat, restaurant, take-away
 - other: alt annet
+
+I tillegg til anbefalingene, analyser de totale månedlige utgiftene og returner en "spendingBreakdown" array med kategorier som faktisk finnes i dataen. Beløpene skal summere til omtrent totalMonthlySpendNOK. Inkluder kun kategorier med faktiske transaksjoner.
 
 Svar KUN med gyldig JSON:
 {
   "totalEstimatedSavingsNOK": number,
+  "totalMonthlySpendNOK": number,
+  "spendingBreakdown": [
+    {
+      "category": "electricity|loans|mobile|insurance|subscriptions|savings|credit_card|food|other",
+      "labelNO": "string (norsk visningsnavn, eks: \\"Mat og dagligvare\\")",
+      "amountNOK": number,
+      "percentage": number
+    }
+  ],
   "recommendations": [
     {
       "rank": number,
@@ -54,19 +65,34 @@ export interface Recommendation {
 
 export interface SpendingCategory {
   category: string;
-  labelNO?: string;
+  labelNO: string;
   amountNOK: number;
   percentage: number;
 }
 
 export interface AnalysisResult {
   totalEstimatedSavingsNOK: number;
+  totalMonthlySpendNOK?: number;
+  spendingBreakdown?: SpendingCategory[];
   recommendations: Recommendation[];
   positives: string[];
   no_change_needed: string[];
-  // Added in 2.3 — optional for backwards compatibility
-  spendingBreakdown?: SpendingCategory[];
-  totalMonthlySpendNOK?: number;
+}
+
+/** Renders spendingBreakdown as an HTML table for email templates (no Recharts needed). */
+export function spendingBreakdownToHtml(
+  breakdown: SpendingCategory[]
+): string {
+  if (!breakdown || breakdown.length === 0) return "";
+  const rows = breakdown
+    .map(
+      (c) =>
+        `<tr><td style="padding:4px 12px 4px 0">${c.labelNO}</td>` +
+        `<td style="padding:4px 0;text-align:right">${c.amountNOK.toLocaleString("nb-NO")} kr</td>` +
+        `<td style="padding:4px 0 4px 12px;text-align:right;color:#6b7280">${c.percentage}%</td></tr>`
+    )
+    .join("");
+  return `<table style="border-collapse:collapse;font-size:14px;width:100%">${rows}</table>`;
 }
 
 export async function analyzeTransactions(
