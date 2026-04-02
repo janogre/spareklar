@@ -148,32 +148,39 @@ export default function InputForm() {
 
   return (
     <form onSubmit={handleSubmit} className="w-full space-y-4">
-      <textarea
-        className="w-full min-h-[160px] sm:min-h-[200px] rounded-xl border border-gray-300 bg-white p-4 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-y"
-        placeholder="Lim inn transaksjoner her (f.eks. fra nettbank) — eller last opp en CSV/PDF-fil nedenfor."
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        aria-label="Transaksjonsdata"
-      />
+      <div className="relative">
+        <textarea
+          className="w-full min-h-[160px] sm:min-h-[200px] rounded-2xl border border-gray-200 bg-white px-4 py-4 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y shadow-inner transition-shadow"
+          placeholder="Lim inn transaksjoner her (f.eks. fra nettbank) — eller last opp en CSV/PDF-fil nedenfor."
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          aria-label="Transaksjonsdata"
+        />
+        {text.length > 0 && (
+          <div className="absolute bottom-3 right-3 text-xs text-gray-300 select-none">
+            {text.length} tegn
+          </div>
+        )}
+      </div>
 
       {error && (
-        <p className="text-red-600 text-sm rounded-lg bg-red-50 border border-red-200 px-4 py-2">
+        <p className="text-red-600 text-sm rounded-xl bg-red-50 border border-red-200 px-4 py-3">
           {error}
         </p>
       )}
 
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+      <div className="flex flex-col gap-3">
         <button
           type="submit"
-          className="flex-1 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-base"
+          className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-3.5 px-6 rounded-xl transition-colors text-base shadow-sm hover:shadow-md"
         >
-          Analyser
+          Analyser utgiftene mine
         </button>
 
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="flex items-center justify-center gap-2 border border-gray-300 hover:border-gray-400 bg-white text-gray-700 font-medium py-3 px-5 rounded-xl transition-colors text-sm"
+          className="flex items-center justify-center gap-2 border border-gray-200 hover:border-gray-300 bg-white text-gray-600 font-medium py-3 px-5 rounded-xl transition-colors text-sm hover:bg-gray-50"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -190,7 +197,7 @@ export default function InputForm() {
         />
       </div>
 
-      <div className="flex justify-center pt-2">
+      <div className="flex justify-center pt-1">
         <PrivacyBadge />
       </div>
     </form>
