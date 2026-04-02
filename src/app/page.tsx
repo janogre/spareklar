@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import InputForm from "@/components/InputForm";
 import TrustBadge from "@/components/TrustBadge";
 import PrivacyBadge from "@/components/PrivacyBadge";
