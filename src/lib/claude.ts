@@ -45,7 +45,7 @@ Svar KUN med gyldig JSON:
       "reason": "string (én setning med konkret referanse til brukerens transaksjoner)",
       "specific_transactions": ["string (eks: \\"Netflix 179 kr/mnd, Viaplay 269 kr/mnd\\")"],
       "estimatedSavingsNOK": number,
-      "affiliateKey": "electricity|loans|mobile|insurance|subscriptions|savings|credit_card|food|null"
+      "affiliateKey": "electricity|loans|mobile|insurance|savings|credit_card|food|null"
     }
   ],
   "positives": ["string (hva brukeren gjør bra, med konkret referanse)"],

@@ -156,9 +156,8 @@ export function buildEmailHtml(result: AnalysisResult): string {
             <td style="background:#f3f4f6;padding:16px 32px;text-align:center;border-top:1px solid #e5e7eb;">
               <p style="margin:0;font-size:12px;color:#9ca3af;">
                 Du mottok denne e-posten fordi du ba om å få rapporten din tilsendt.
+                Dette er en engangs-e-post — du vil ikke motta fremtidig markedsføring.
                 <br />
-                <a href="{{unsubscribeUrl}}" style="color:#6b7280;">Meld deg av</a>
-                &nbsp;&bull;&nbsp;
                 <a href="https://spareklar.no" style="color:#6b7280;">spareklar.no</a>
               </p>
             </td>
