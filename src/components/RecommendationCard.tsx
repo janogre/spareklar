@@ -55,7 +55,16 @@ export default function RecommendationCard({ recommendation }: Props) {
       <h3 className="font-semibold text-gray-900 mb-1 text-sm sm:text-base">
         {recommendation.action}
       </h3>
-      <p className="text-sm text-gray-500 mb-4">{recommendation.reason}</p>
+      <p className={`text-sm text-gray-500 ${recommendation.specific_transactions?.length > 0 ? "mb-2" : "mb-4"}`}>
+        {recommendation.reason}
+      </p>
+      {recommendation.specific_transactions?.length > 0 && (
+        <ul className="text-sm text-gray-500 mt-1 mb-4 list-disc list-inside">
+          {recommendation.specific_transactions.map((t, i) => (
+            <li key={i}>{t}</li>
+          ))}
+        </ul>
+      )}
 
       {affiliate && (
         <a

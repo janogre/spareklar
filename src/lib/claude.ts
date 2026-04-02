@@ -4,7 +4,15 @@ const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-const SYSTEM_PROMPT = `Du er en norsk personlig økonomiassistent. Analyser transaksjonsdata og gi 2–4 konkrete, rangerte spareanbefalinger på norsk bokmål. Svar KUN med gyldig JSON i dette formatet:
+const SYSTEM_PROMPT = `Du er en norsk personlig økonomiassistent. Analyser transaksjonsdata og gi 2–4 konkrete, rangerte spareanbefalinger på norsk bokmål.
+
+VIKTIG:
+- Siter ALLTID spesifikke transaksjoner fra dataen. Eks: "Du bruker 890 kr/mnd på Netflix + Viaplay + Disney+"
+- Fortell brukeren hva de IKKE trenger å endre under no_change_needed. Eks: "Strømprisen din ser fornuftig ut"
+- Unngå generiske råd som ikke er forankret i dataen. Kun anbefale kategorier som faktisk er representert
+- Hvis en kategori ikke finnes i dataen, IKKE anbefal den
+
+Svar KUN med gyldig JSON:
 {
   "totalEstimatedSavingsNOK": number,
   "recommendations": [
@@ -12,12 +20,14 @@ const SYSTEM_PROMPT = `Du er en norsk personlig økonomiassistent. Analyser tran
       "rank": number,
       "category": "electricity|loans|mobile|insurance|other",
       "action": "string (kort, handlingsorientert)",
-      "reason": "string (én setning, ikke-dømmende)",
+      "reason": "string (én setning med konkret referanse til brukerens transaksjoner)",
+      "specific_transactions": ["string (eks: \\"Netflix 179 kr/mnd, Viaplay 269 kr/mnd\\")"],
       "estimatedSavingsNOK": number,
       "affiliateKey": "electricity|loans|mobile|insurance|null"
     }
   ],
-  "positives": ["string", "string"]
+  "positives": ["string (hva brukeren gjør bra, med konkret referanse)"],
+  "no_change_needed": ["string (kategorier brukeren ikke trenger å endre)"]
 }
 Bruk ikke markdown i JSON-verdier. Ikke inkluder personsensitive data i output.`;
 
@@ -26,6 +36,7 @@ export interface Recommendation {
   category: string;
   action: string;
   reason: string;
+  specific_transactions: string[];
   estimatedSavingsNOK: number;
   affiliateKey: string | null;
 }
@@ -34,6 +45,7 @@ export interface AnalysisResult {
   totalEstimatedSavingsNOK: number;
   recommendations: Recommendation[];
   positives: string[];
+  no_change_needed: string[];
 }
 
 export async function analyzeTransactions(
@@ -41,7 +53,7 @@ export async function analyzeTransactions(
 ): Promise<AnalysisResult> {
   const message = await client.messages.create({
     model: "claude-sonnet-4-6",
-    max_tokens: 1024,
+    max_tokens: 2048,
     system: SYSTEM_PROMPT,
     messages: [
       {

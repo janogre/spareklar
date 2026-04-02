@@ -20,6 +20,7 @@ const MOCK_RESULT: AnalysisResult = {
       category: "electricity",
       action: "Bytt til Tibber",
       reason: "Du bruker mer strøm enn gjennomsnittet.",
+      specific_transactions: ["Fjordkraft 1 200 kr/mnd"],
       estimatedSavingsNOK: 2400,
       affiliateKey: "electricity",
     },
@@ -28,11 +29,13 @@ const MOCK_RESULT: AnalysisResult = {
       category: "loans",
       action: "Refinansier lånet ditt",
       reason: "Renten er høyere enn markedssnittet.",
+      specific_transactions: ["Santander 2 800 kr/mnd"],
       estimatedSavingsNOK: 1800,
       affiliateKey: "loans",
     },
   ],
   positives: ["Du sparer jevnlig – bra!", "Matbudsjettet er godt kontrollert."],
+  no_change_needed: ["Forsikringene dine ser fornuftige ut"],
 };
 
 function makeClaudeResponse(text: string) {
@@ -159,5 +162,46 @@ describe("analyzeTransactions", () => {
     const callArgs = mockCreate.mock.calls[0][0];
     expect(callArgs.system).toMatch(/json/i);
     expect(callArgs.system).toMatch(/personsensitive/i);
+  });
+
+  it("returns specific_transactions per recommendation", async () => {
+    mockCreate.mockResolvedValueOnce(
+      makeClaudeResponse(JSON.stringify(MOCK_RESULT))
+    );
+
+    const { analyzeTransactions } = await import("@/lib/claude");
+    const result = await analyzeTransactions("transaksjoner");
+
+    for (const rec of result.recommendations) {
+      expect(rec).toHaveProperty("specific_transactions");
+      expect(Array.isArray(rec.specific_transactions)).toBe(true);
+    }
+    expect(result.recommendations[0].specific_transactions).toContain("Fjordkraft 1 200 kr/mnd");
+  });
+
+  it("returns no_change_needed in result", async () => {
+    mockCreate.mockResolvedValueOnce(
+      makeClaudeResponse(JSON.stringify(MOCK_RESULT))
+    );
+
+    const { analyzeTransactions } = await import("@/lib/claude");
+    const result = await analyzeTransactions("transaksjoner");
+
+    expect(result).toHaveProperty("no_change_needed");
+    expect(Array.isArray(result.no_change_needed)).toBe(true);
+    expect(result.no_change_needed).toContain("Forsikringene dine ser fornuftige ut");
+  });
+
+  it("system prompt instructs Claude to cite specific transactions", async () => {
+    mockCreate.mockResolvedValueOnce(
+      makeClaudeResponse(JSON.stringify(MOCK_RESULT))
+    );
+
+    const { analyzeTransactions } = await import("@/lib/claude");
+    await analyzeTransactions("transaksjoner");
+
+    const callArgs = mockCreate.mock.calls[0][0];
+    expect(callArgs.system).toMatch(/specific_transactions/i);
+    expect(callArgs.system).toMatch(/no_change_needed/i);
   });
 });

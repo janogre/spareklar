@@ -50,6 +50,25 @@ export default function SpareRapportReadOnly({ result }: Props) {
         </div>
       )}
 
+      {/* No change needed */}
+      {result.no_change_needed?.length > 0 && (
+        <div className="rounded-2xl bg-blue-50 border border-blue-200 p-5">
+          <h2 className="text-base font-bold text-blue-800 mb-3">
+            Dette trenger du ikke endre
+          </h2>
+          <ul className="space-y-2">
+            {result.no_change_needed.map((item, i) => (
+              <li key={i} className="flex items-start gap-2 text-sm text-blue-700">
+                <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {/* CTA */}
       <div className="text-center">
         <Link

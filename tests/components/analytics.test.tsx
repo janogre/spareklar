@@ -105,6 +105,29 @@ describe("RecommendationCard analytics", () => {
     expect(screen.queryByRole("link")).toBeNull();
     expect(mockTrack).not.toHaveBeenCalled();
   });
+
+  it("renders specific_transactions as a list when present", () => {
+    const withTransactions = {
+      ...recommendation,
+      specific_transactions: ["Netflix 179 kr/mnd", "Viaplay 269 kr/mnd"],
+    };
+    render(<RecommendationCard recommendation={withTransactions} />);
+    expect(screen.getByText("Netflix 179 kr/mnd")).toBeInTheDocument();
+    expect(screen.getByText("Viaplay 269 kr/mnd")).toBeInTheDocument();
+  });
+
+  it("does not render transaction list when specific_transactions is empty", () => {
+    const withEmpty = { ...recommendation, specific_transactions: [] };
+    const { container } = render(<RecommendationCard recommendation={withEmpty} />);
+    expect(container.querySelector("ul")).toBeNull();
+  });
+
+  it("does not render transaction list when specific_transactions is absent", () => {
+    const withoutField = { ...recommendation } as typeof recommendation & { specific_transactions?: string[] };
+    delete withoutField.specific_transactions;
+    const { container } = render(<RecommendationCard recommendation={withoutField as typeof recommendation} />);
+    expect(container.querySelector("ul")).toBeNull();
+  });
 });
 
 // ── ShareCard ────────────────────────────────────────────────────────────────
