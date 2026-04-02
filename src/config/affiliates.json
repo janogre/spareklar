@@ -23,12 +23,6 @@
     "cta": "Sammenlign forsikringer",
     "category": "Forsikring"
   },
-  "subscriptions": {
-    "partnerName": "Strømpris",
-    "url": "https://www.strompris.no/?ref=spareklar",
-    "cta": "Sammenlign abonnementer",
-    "category": "Abonnementer"
-  },
   "savings": {
     "partnerName": "Kron",
     "url": "https://www.kron.no/?ref=spareklar",
