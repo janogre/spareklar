@@ -23,7 +23,8 @@
     "papaparse": "^5.5.2",
     "pdf-parse": "^1.1.1",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "redis": "^5.11.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
