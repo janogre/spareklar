@@ -1,15 +1,17 @@
 import type { AnalysisResult } from "@/lib/claude";
 import RecommendationCard from "./RecommendationCard";
+import EmailCapture from "./EmailCapture";
 import PrivacyBadge from "./PrivacyBadge";
 import Link from "next/link";
 
 interface Props {
   result: AnalysisResult;
+  token?: string;
 }
 
 // Read-only variant of SpareRapport used for shared /r/[token] pages.
 // Does NOT include ShareCard to avoid circular share generation.
-export default function SpareRapportReadOnly({ result }: Props) {
+export default function SpareRapportReadOnly({ result, token }: Props) {
   return (
     <div className="w-full space-y-8">
       {/* Summary header */}
@@ -68,6 +70,9 @@ export default function SpareRapportReadOnly({ result }: Props) {
           </ul>
         </div>
       )}
+
+      {/* Email capture */}
+      <EmailCapture token={token} result={token ? undefined : result} />
 
       {/* CTA */}
       <div className="text-center">

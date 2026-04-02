@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { AnalysisResult } from "@/lib/claude";
 import RecommendationCard from "./RecommendationCard";
 import ShareCard from "./ShareCard";
+import EmailCapture from "./EmailCapture";
 import PrivacyBadge from "./PrivacyBadge";
 
 interface Props {
@@ -119,6 +120,9 @@ export default function SpareRapport({ result }: Props) {
 
       {/* Share card */}
       <ShareCard result={result} />
+
+      {/* Email capture */}
+      <EmailCapture result={result} />
 
       {/* Privacy badge */}
       <div className="flex justify-center">

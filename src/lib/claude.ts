@@ -41,11 +41,21 @@ export interface Recommendation {
   affiliateKey: string | null;
 }
 
+export interface SpendingCategory {
+  category: string;
+  labelNO?: string;
+  amountNOK: number;
+  percentage: number;
+}
+
 export interface AnalysisResult {
   totalEstimatedSavingsNOK: number;
   recommendations: Recommendation[];
   positives: string[];
   no_change_needed: string[];
+  // Added in 2.3 — optional for backwards compatibility
+  spendingBreakdown?: SpendingCategory[];
+  totalMonthlySpendNOK?: number;
 }
 
 export async function analyzeTransactions(
