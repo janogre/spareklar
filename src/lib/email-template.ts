@@ -43,7 +43,7 @@ function buildRecommendationHtml(rec: Recommendation): string {
           ${esc(rec.rank.toString())}. ${esc(rec.action)}
         </p>
         <p style="margin:0 0 8px;font-size:13px;color:#6b7280;">
-          Estimert besparelse: <strong style="color:#16a34a;">${rec.estimatedSavingsNOK.toLocaleString("nb-NO")} kr/år</strong>
+          Estimert besparelse: <strong style="color:#16a34a;">${esc(rec.estimatedSavingsNOK.toLocaleString("nb-NO"))} kr/år</strong>
         </p>
         <p style="margin:0 0 8px;font-size:14px;color:#374151;">${esc(rec.reason)}</p>
         ${
@@ -65,8 +65,8 @@ function buildSpendingTableHtml(
       (item) => `
     <tr>
       <td style="padding:6px 12px 6px 0;font-size:13px;color:#374151;">${esc(item.labelNO ?? item.category)}</td>
-      <td style="padding:6px 0;font-size:13px;color:#374151;text-align:right;">${item.amountNOK.toLocaleString("nb-NO")} kr</td>
-      <td style="padding:6px 0 6px 12px;font-size:13px;color:#9ca3af;text-align:right;">${item.percentage.toFixed(0)}%</td>
+      <td style="padding:6px 0;font-size:13px;color:#374151;text-align:right;">${esc(item.amountNOK.toLocaleString("nb-NO"))} kr</td>
+      <td style="padding:6px 0 6px 12px;font-size:13px;color:#9ca3af;text-align:right;">${esc(item.percentage.toFixed(0))}%</td>
     </tr>`
     )
     .join("\n");
@@ -120,7 +120,7 @@ export function buildEmailHtml(result: AnalysisResult): string {
           <tr>
             <td style="background:#1d4ed8;padding:28px 32px;text-align:center;">
               <p style="margin:0;font-size:13px;font-weight:600;color:#bfdbfe;letter-spacing:0.08em;text-transform:uppercase;">Din Sparerapport</p>
-              <p style="margin:8px 0 4px;font-size:42px;font-weight:800;color:#ffffff;">${savings} kr</p>
+              <p style="margin:8px 0 4px;font-size:42px;font-weight:800;color:#ffffff;">${esc(savings)} kr</p>
               <p style="margin:0;font-size:14px;color:#bfdbfe;">potensielle besparelser per år</p>
             </td>
           </tr>

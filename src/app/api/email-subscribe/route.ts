@@ -59,11 +59,25 @@ export async function POST(req: NextRequest) {
     }
     report = stored.result;
   } else if (inlineResult !== undefined) {
-    // Inline result — basic shape validation to guard against crafted payloads
+    // Inline result — validate shape before passing to the email template.
+    // Even though the template escapes all output, we enforce types here so
+    // crafted payloads (e.g. non-string action, non-number savings) don't cause
+    // unexpected behaviour or bypass the type-contract relied on by esc().
     const r = inlineResult as Record<string, unknown>;
     if (
       typeof r.totalEstimatedSavingsNOK !== "number" ||
-      !Array.isArray(r.recommendations)
+      !Array.isArray(r.recommendations) ||
+      !Array.isArray(r.positives) ||
+      r.recommendations.some(
+        (rec: unknown) =>
+          typeof rec !== "object" ||
+          rec === null ||
+          typeof (rec as Record<string, unknown>).action !== "string" ||
+          typeof (rec as Record<string, unknown>).reason !== "string" ||
+          typeof (rec as Record<string, unknown>).estimatedSavingsNOK !== "number" ||
+          !Array.isArray((rec as Record<string, unknown>).specific_transactions)
+      ) ||
+      r.positives.some((p: unknown) => typeof p !== "string")
     ) {
       return NextResponse.json({ error: "Invalid report data" }, { status: 400 });
     }
