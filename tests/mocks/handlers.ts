@@ -39,4 +39,8 @@ export const handlers = [
   http.post("/api/analyze", async () => {
     return HttpResponse.json(MOCK_CLAUDE_RESPONSE);
   }),
+  // Mock the /api/share endpoint
+  http.post("/api/share", async () => {
+    return HttpResponse.json({ token: "testTok1", shareUrl: "https://spareklar.no/r/testTok1" });
+  }),
 ];

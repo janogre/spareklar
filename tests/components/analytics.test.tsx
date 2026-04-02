@@ -15,12 +15,10 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
 }));
 
-// Mock html2canvas used by ShareCard
-vi.mock("html2canvas", () => ({
-  default: vi.fn().mockResolvedValue({
-    toDataURL: () => "data:image/png;base64,abc",
-  }),
-}));
+// Mock clipboard used by ShareCard copy button
+Object.assign(navigator, {
+  clipboard: { writeText: vi.fn().mockResolvedValue(undefined) },
+});
 
 import * as vercelAnalytics from "@vercel/analytics";
 import InputForm from "@/components/InputForm";
@@ -112,13 +110,25 @@ describe("RecommendationCard analytics", () => {
 // ── ShareCard ────────────────────────────────────────────────────────────────
 
 describe("ShareCard analytics", () => {
-  it("tracks share_action with method copy_link after download", async () => {
+  it("tracks share_action with method copy_link when copy button is clicked", async () => {
     render(<ShareCard result={MOCK_CLAUDE_RESPONSE} />);
-    const btn = screen.getByRole("button", { name: /last ned/i });
+    const btn = screen.getByRole("button", { name: /kopier lenke/i });
     fireEvent.click(btn);
 
     await waitFor(() => {
       expect(mockTrack).toHaveBeenCalledWith("share_action", { method: "copy_link" });
     });
+  });
+
+  it("tracks share_action with method whatsapp when WhatsApp button is clicked", async () => {
+    const openSpy = vi.spyOn(window, "open").mockImplementation(() => null);
+    render(<ShareCard result={MOCK_CLAUDE_RESPONSE} />);
+    const btn = screen.getByRole("button", { name: /whatsapp/i });
+    fireEvent.click(btn);
+
+    await waitFor(() => {
+      expect(mockTrack).toHaveBeenCalledWith("share_action", { method: "whatsapp" });
+    });
+    openSpy.mockRestore();
   });
 });
