@@ -1,4 +1,4 @@
-import { kv } from "@vercel/kv";
+import { kv } from "@/lib/kv";
 import { nanoid } from "nanoid";
 import type { AnalysisResult } from "@/lib/claude";
 
