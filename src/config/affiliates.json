@@ -22,5 +22,23 @@
     "url": "https://www.uno.no/?ref=spareklar",
     "cta": "Sammenlign forsikringer",
     "category": "Forsikring"
+  },
+  "savings": {
+    "partnerName": "Kron",
+    "url": "https://www.kron.no/?ref=spareklar",
+    "cta": "Start månedlig sparing",
+    "category": "Sparing"
+  },
+  "credit_card": {
+    "partnerName": "Compricer",
+    "url": "https://www.compricer.no/?ref=spareklar",
+    "cta": "Finn bedre kredittkort",
+    "category": "Kredittkort"
+  },
+  "food": {
+    "partnerName": "Mattilbud.no",
+    "url": "https://www.mattilbud.no/?ref=spareklar",
+    "cta": "Se ukens tilbud",
+    "category": "Mat"
   }
 }

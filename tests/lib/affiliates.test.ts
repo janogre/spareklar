@@ -2,8 +2,8 @@ import { describe, it, expect } from "vitest";
 import { getAffiliate, affiliates } from "@/lib/affiliates";
 
 describe("affiliates config", () => {
-  it("loads all 4 affiliate categories", () => {
-    expect(Object.keys(affiliates)).toHaveLength(4);
+  it("loads all 7 affiliate categories", () => {
+    expect(Object.keys(affiliates)).toHaveLength(7);
     expect(affiliates).toHaveProperty("electricity");
     expect(affiliates).toHaveProperty("loans");
     expect(affiliates).toHaveProperty("mobile");

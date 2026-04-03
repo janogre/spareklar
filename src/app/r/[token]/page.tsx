@@ -65,5 +65,5 @@ export default async function SharedRapportPage({ params }: PageProps) {
     );
   }
 
-  return <SpareRapportReadOnly result={data.result} />;
+  return <SpareRapportReadOnly result={data.result} token={params.token} />;
 }

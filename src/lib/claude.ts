@@ -12,22 +12,53 @@ VIKTIG:
 - Unngå generiske råd som ikke er forankret i dataen. Kun anbefale kategorier som faktisk er representert
 - Hvis en kategori ikke finnes i dataen, IKKE anbefal den
 
+Kategorier og eksempler:
+- electricity: strøm, Tibber, Fjordkraft, Fortum
+- loans: lån, kreditt, renter, avdrag
+- mobile: mobil, bredbånd, Telenor, Telia, ice
+- insurance: forsikring, Gjensidige, If, Fremtind
+- subscriptions: Netflix, Viaplay, Disney+, Spotify, abonnement, HBO, SATS, gym
+- savings: BSU, fondssparing, Kron, aksjer, spareform, sparekonto, fond
+- credit_card: kredittkort, Visa, Mastercard, kortgebyr, årsgebyr
+- food: dagligvare, Rema, Kiwi, Meny, Coop, mat, restaurant, take-away
+- other: alt annet
+
+I tillegg til anbefalingene, analyser de totale månedlige utgiftene og returner en "spendingBreakdown" array med kategorier som faktisk finnes i dataen. Beløpene skal summere til omtrent totalMonthlySpendNOK. Inkluder kun kategorier med faktiske transaksjoner.
+
+FLERKONTO:
+- Hvis data inneholder seksjoner merket [Konto: lønnskonto/brukskonto/sparekonto]:
+  - Filtrer transaksjoner som er overføringer MELLOM disse kontoene.
+    Eks: overføring til sparekonto er IKKE en utgift.
+  - Beregn faktisk sparerate: (sparebeløp / lønnskontoinntekt) × 100
+  - Inkluder spareraten i JSON som "savingsRate" (number, prosent, nullable)
+  - Analyser på tvers av alle kontoer for et helhetlig bilde.
+
 Svar KUN med gyldig JSON:
 {
   "totalEstimatedSavingsNOK": number,
+  "totalMonthlySpendNOK": number,
+  "spendingBreakdown": [
+    {
+      "category": "electricity|loans|mobile|insurance|subscriptions|savings|credit_card|food|other",
+      "labelNO": "string (norsk visningsnavn, eks: \\"Mat og dagligvare\\")",
+      "amountNOK": number,
+      "percentage": number
+    }
+  ],
   "recommendations": [
     {
       "rank": number,
-      "category": "electricity|loans|mobile|insurance|other",
+      "category": "electricity|loans|mobile|insurance|subscriptions|savings|credit_card|food|other",
       "action": "string (kort, handlingsorientert)",
       "reason": "string (én setning med konkret referanse til brukerens transaksjoner)",
       "specific_transactions": ["string (eks: \\"Netflix 179 kr/mnd, Viaplay 269 kr/mnd\\")"],
       "estimatedSavingsNOK": number,
-      "affiliateKey": "electricity|loans|mobile|insurance|null"
+      "affiliateKey": "electricity|loans|mobile|insurance|savings|credit_card|food|null"
     }
   ],
   "positives": ["string (hva brukeren gjør bra, med konkret referanse)"],
-  "no_change_needed": ["string (kategorier brukeren ikke trenger å endre)"]
+  "no_change_needed": ["string (kategorier brukeren ikke trenger å endre)"],
+  "savingsRate": number | null
 }
 Bruk ikke markdown i JSON-verdier. Ikke inkluder personsensitive data i output.`;
 
@@ -41,11 +72,37 @@ export interface Recommendation {
   affiliateKey: string | null;
 }
 
+export interface SpendingCategory {
+  category: string;
+  labelNO: string;
+  amountNOK: number;
+  percentage: number;
+}
+
 export interface AnalysisResult {
   totalEstimatedSavingsNOK: number;
+  totalMonthlySpendNOK?: number;
+  spendingBreakdown?: SpendingCategory[];
   recommendations: Recommendation[];
   positives: string[];
   no_change_needed: string[];
+  savingsRate?: number | null; // only present for multi-account analysis
+}
+
+/** Renders spendingBreakdown as an HTML table for email templates (no Recharts needed). */
+export function spendingBreakdownToHtml(
+  breakdown: SpendingCategory[]
+): string {
+  if (!breakdown || breakdown.length === 0) return "";
+  const rows = breakdown
+    .map(
+      (c) =>
+        `<tr><td style="padding:4px 12px 4px 0">${c.labelNO}</td>` +
+        `<td style="padding:4px 0;text-align:right">${c.amountNOK.toLocaleString("nb-NO")} kr</td>` +
+        `<td style="padding:4px 0 4px 12px;text-align:right;color:#6b7280">${c.percentage}%</td></tr>`
+    )
+    .join("");
+  return `<table style="border-collapse:collapse;font-size:14px;width:100%">${rows}</table>`;
 }
 
 export async function analyzeTransactions(

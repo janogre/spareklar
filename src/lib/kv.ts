@@ -44,4 +44,9 @@ export const kv = {
     if (raw === null) return null;
     return JSON.parse(raw) as T;
   },
+
+  async incr(key: string): Promise<number> {
+    const client = await getClient();
+    return client.incr(key);
+  },
 };

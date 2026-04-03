@@ -52,7 +52,7 @@ describe("InputForm analytics", () => {
     fireEvent.submit(textarea.closest("form")!);
 
     await waitFor(() => {
-      expect(mockTrack).toHaveBeenCalledWith("report_generated", { input_type: "text" });
+      expect(mockTrack).toHaveBeenCalledWith("report_generated", { input_type: "text", account_count: 1 });
       expect(mockTrack).toHaveBeenCalledWith("input_type", { type: "text" });
     });
   });
@@ -95,7 +95,7 @@ describe("RecommendationCard analytics", () => {
 
     const call = mockTrack.mock.calls[0];
     expect(call[0]).toBe("affiliate_click");
-    expect(call[1].category).toBe("electricity");
+    expect(call[1]!.category).toBe("electricity");
   });
 
   it("does not call track when there is no affiliate", () => {
@@ -123,8 +123,8 @@ describe("RecommendationCard analytics", () => {
   });
 
   it("does not render transaction list when specific_transactions is absent", () => {
-    const withoutField = { ...recommendation } as typeof recommendation & { specific_transactions?: string[] };
-    delete withoutField.specific_transactions;
+    const withoutField = { ...recommendation };
+    (withoutField as unknown as { specific_transactions: undefined }).specific_transactions = undefined;
     const { container } = render(<RecommendationCard recommendation={withoutField as typeof recommendation} />);
     expect(container.querySelector("ul")).toBeNull();
   });

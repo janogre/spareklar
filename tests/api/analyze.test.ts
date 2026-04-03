@@ -3,6 +3,11 @@ import { http, HttpResponse } from "msw";
 import { server } from "../mocks/server";
 import type { AnalysisResult } from "@/lib/claude";
 
+// Mock pdf-parse for multi-account PDF tests
+vi.mock("pdf-parse", () => ({
+  default: vi.fn().mockResolvedValue({ text: "Sparekonto transaksjoner\nOverføring 5000kr" }),
+}));
+
 // Mock the Anthropic SDK so integration tests don't make real API calls
 const mockCreate = vi.fn();
 vi.mock("@anthropic-ai/sdk", () => {
@@ -22,11 +27,13 @@ const MOCK_RESULT: AnalysisResult = {
       category: "electricity",
       action: "Bytt til Tibber",
       reason: "Du bruker mer strøm enn gjennomsnittet.",
+      specific_transactions: [],
       estimatedSavingsNOK: 2400,
       affiliateKey: "electricity",
     },
   ],
   positives: ["Du sparer jevnlig – bra!"],
+  no_change_needed: [],
 };
 
 function makeClaudeMessage(text: string) {
@@ -202,5 +209,103 @@ describe("POST /api/analyze — Claude error handling", () => {
     expect(res.status).toBe(429);
     const json = await res.json();
     expect(json.error).toBeDefined();
+  });
+});
+
+describe("POST /api/analyze — multi-account path", () => {
+  beforeEach(() => {
+    mockCreate.mockReset();
+    mockCreate.mockResolvedValue(makeClaudeMessage(JSON.stringify(MOCK_RESULT)));
+  });
+
+  it("returns 200 and sends merged text with [Konto:] headers and --- separator", async () => {
+    const res = await callRoute({
+      accounts: [
+        { type: "lønnskonto", inputType: "text", data: "Lønn 45000kr" },
+        { type: "brukskonto", inputType: "csv", data: "Dato;Beskrivelse;Beløp\n01.03.2025;Rema;-234.50" },
+      ],
+    });
+    expect(res.status).toBe(200);
+    const callArgs = mockCreate.mock.calls[0][0];
+    const userMsg = callArgs.messages[0].content as string;
+    expect(userMsg).toContain("[Konto: lønnskonto]");
+    expect(userMsg).toContain("[Konto: brukskonto]");
+    expect(userMsg).toContain("---");
+  });
+
+  it("returns 200 with valid response shape for 3 text accounts", async () => {
+    const res = await callRoute({
+      accounts: [
+        { type: "lønnskonto", inputType: "text", data: "Lønn 45000kr" },
+        { type: "brukskonto", inputType: "text", data: "Dagligvare 2300kr" },
+        { type: "sparekonto", inputType: "text", data: "Sparing 5000kr" },
+      ],
+    });
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json).toHaveProperty("recommendations");
+    expect(json).toHaveProperty("totalEstimatedSavingsNOK");
+    const callArgs = mockCreate.mock.calls[0][0];
+    const userMsg = callArgs.messages[0].content as string;
+    expect(userMsg).toContain("[Konto: sparekonto]");
+    expect((userMsg.match(/---/g) ?? []).length).toBe(2);
+  });
+
+  it("returns 400 when accounts array has 4 entries", async () => {
+    const res = await callRoute({
+      accounts: [
+        { type: "lønnskonto", inputType: "text", data: "data1" },
+        { type: "brukskonto", inputType: "text", data: "data2" },
+        { type: "sparekonto", inputType: "text", data: "data3" },
+        { type: "brukskonto", inputType: "text", data: "data4" },
+      ],
+    });
+    expect(res.status).toBe(400);
+    const json = await res.json();
+    expect(json.error).toBeDefined();
+  });
+
+  it("returns 400 for empty accounts array", async () => {
+    const res = await callRoute({ accounts: [] });
+    expect(res.status).toBe(400);
+    const json = await res.json();
+    expect(json.error).toBeDefined();
+  });
+
+  it("returns 400 when an account has empty data", async () => {
+    const res = await callRoute({
+      accounts: [{ type: "lønnskonto", inputType: "text", data: "" }],
+    });
+    expect(res.status).toBe(400);
+    const json = await res.json();
+    expect(json.error).toBeDefined();
+  });
+
+  it("returns 400 for invalid account type", async () => {
+    const res = await callRoute({
+      accounts: [{ type: "sparepengekonto", inputType: "text", data: "data" }],
+    });
+    expect(res.status).toBe(400);
+  });
+
+  it("single-account path still works unchanged (backward compat)", async () => {
+    const res = await callRoute({
+      inputType: "text",
+      data: "Betalt Netflix 179kr",
+    });
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json).toHaveProperty("recommendations");
+  });
+
+  it("SYSTEM_PROMPT contains FLERKONTO section", async () => {
+    await callRoute({
+      accounts: [
+        { type: "lønnskonto", inputType: "text", data: "Lønn 45000kr" },
+      ],
+    });
+    const callArgs = mockCreate.mock.calls[0][0];
+    expect(callArgs.system).toMatch(/FLERKONTO/);
+    expect(callArgs.system).toMatch(/savingsRate/);
   });
 });

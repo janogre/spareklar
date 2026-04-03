@@ -24,7 +24,9 @@
     "pdf-parse": "^1.1.1",
     "react": "^18",
     "react-dom": "^18",
-    "redis": "^5.11.0"
+    "recharts": "^3.8.1",
+    "redis": "^5.11.0",
+    "resend": "^6.10.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
