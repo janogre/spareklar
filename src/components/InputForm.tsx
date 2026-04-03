@@ -150,7 +150,7 @@ export default function InputForm() {
     <form onSubmit={handleSubmit} className="w-full space-y-4">
       <div className="relative">
         <textarea
-          className="w-full min-h-[160px] sm:min-h-[200px] rounded-2xl border border-gray-200 bg-white px-4 py-4 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y shadow-inner transition-shadow"
+          className="w-full min-h-36 sm:min-h-[200px] rounded-2xl border border-gray-200 bg-white px-4 py-4 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-y shadow-inner transition-shadow"
           placeholder="Lim inn transaksjoner her (f.eks. fra nettbank) — eller last opp en CSV/PDF-fil nedenfor."
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -172,7 +172,7 @@ export default function InputForm() {
       <div className="flex flex-col gap-3">
         <button
           type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-3.5 px-6 rounded-xl transition-colors text-base shadow-sm hover:shadow-md"
+          className="w-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold py-3.5 px-6 rounded-xl transition-colors text-base shadow-sm hover:shadow-md"
         >
           Analyser utgiftene mine
         </button>

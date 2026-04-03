@@ -103,7 +103,7 @@ export default function RecommendationCard({ recommendation }: Props) {
           </span>
         </div>
         <div className="text-right flex-shrink-0">
-          <p className="text-lg font-bold text-green-600">
+          <p className="text-xl font-extrabold text-green-600">
             {recommendation.estimatedSavingsNOK.toLocaleString("nb-NO")} kr
           </p>
           <p className="text-xs text-gray-400">per år</p>
@@ -129,7 +129,7 @@ export default function RecommendationCard({ recommendation }: Props) {
           href={affiliate.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-semibold px-5 py-2.5 transition-colors shadow-sm hover:shadow-md"
+          className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-sm font-semibold px-5 py-2.5 transition-colors shadow-sm hover:shadow-md"
           onClick={() => {
             track("affiliate_click", {
               category: recommendation.affiliateKey,

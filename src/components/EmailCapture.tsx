@@ -88,15 +88,24 @@ export default function EmailCapture({ token, result }: Props) {
       </div>
 
       <form onSubmit={handleSubmit} noValidate className="space-y-3">
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="din@epost.no"
-          autoComplete="email"
-          required
-          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        />
+        <div className="flex flex-col sm:flex-row gap-2">
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="din@epost.no"
+            autoComplete="email"
+            required
+            className="flex-1 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+          />
+          <button
+            type="submit"
+            disabled={!canSubmit}
+            className="sm:flex-shrink-0 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed min-h-[44px]"
+          >
+            {status === "loading" ? "Sender…" : "Send rapport"}
+          </button>
+        </div>
 
         <label className="flex items-start gap-3 cursor-pointer">
           <input
@@ -104,7 +113,7 @@ export default function EmailCapture({ token, result }: Props) {
             checked={consent}
             onChange={(e) => setConsent(e.target.checked)}
             required
-            className="mt-0.5 w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+            className="mt-0.5 w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
           />
           <span className="text-xs text-gray-500 leading-relaxed">
             Jeg samtykker til å motta rapporten og minner om sparing fra Spareklar.
@@ -115,14 +124,6 @@ export default function EmailCapture({ token, result }: Props) {
         {status === "error" && (
           <p className="text-sm text-red-600">{errorMsg}</p>
         )}
-
-        <button
-          type="submit"
-          disabled={!canSubmit}
-          className="w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed"
-        >
-          {status === "loading" ? "Sender…" : "Send rapport"}
-        </button>
       </form>
     </div>
   );

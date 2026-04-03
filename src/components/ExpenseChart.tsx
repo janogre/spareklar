@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   PieChart,
   Pie,
@@ -52,13 +53,26 @@ interface Props {
   totalMonthlySpendNOK: number;
 }
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 639px)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+  return isMobile;
+}
+
 export default function ExpenseChart({ data, totalMonthlySpendNOK }: Props) {
+  const isMobile = useIsMobile();
   if (!data || data.length === 0) return null;
 
   const chartData = prepareData(data);
 
   return (
-    <div className="rounded-2xl bg-white border border-gray-100 p-5 shadow-sm">
+    <div className="rounded-2xl bg-white border border-gray-100 p-5 shadow-sm max-w-full overflow-hidden">
       <div className="flex items-center gap-3 mb-4">
         <h2 className="text-lg font-bold text-gray-900">Utgiftsoversikt</h2>
         <div className="flex-1 h-px bg-gray-100" />
@@ -66,12 +80,12 @@ export default function ExpenseChart({ data, totalMonthlySpendNOK }: Props) {
           {totalMonthlySpendNOK.toLocaleString("nb-NO")} kr/mnd
         </span>
       </div>
-      <ResponsiveContainer width="100%" height={260}>
+      <ResponsiveContainer width="100%" height={isMobile ? 300 : 260}>
         <PieChart>
           <Pie
             data={chartData}
             cx="50%"
-            cy="50%"
+            cy={isMobile ? "40%" : "50%"}
             innerRadius="50%"
             outerRadius="75%"
             dataKey="amountNOK"
@@ -93,8 +107,11 @@ export default function ExpenseChart({ data, totalMonthlySpendNOK }: Props) {
           <Legend
             iconType="circle"
             iconSize={8}
+            layout={isMobile ? "vertical" : "horizontal"}
+            align={isMobile ? "center" : "center"}
+            verticalAlign={isMobile ? "bottom" : "bottom"}
             formatter={(value: string) => (
-              <span style={{ fontSize: 12, color: "#4B5563" }}>{value}</span>
+              <span style={{ fontSize: 11, color: "#4B5563" }}>{value}</span>
             )}
           />
         </PieChart>

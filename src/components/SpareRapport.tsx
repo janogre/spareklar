@@ -47,7 +47,7 @@ export default function SpareRapport({ result }: Props) {
     <div className="w-full space-y-8 animate-fade-in">
       {/* Summary header */}
       <div className="text-center space-y-3">
-        <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 border border-blue-100 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-600 mb-1">
+        <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 border border-emerald-100 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-emerald-600 mb-1">
           <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
             <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
           </svg>
@@ -56,7 +56,7 @@ export default function SpareRapport({ result }: Props) {
 
         {/* Accent bar above number */}
         <div className="flex justify-center">
-          <div className="h-1 w-16 rounded-full bg-gradient-to-r from-blue-400 to-blue-600" />
+          <div className="h-1 w-16 rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600" />
         </div>
 
         <p className="text-5xl sm:text-6xl font-extrabold text-gray-900 tracking-tight animate-count-up tabular-nums">
@@ -114,11 +114,11 @@ export default function SpareRapport({ result }: Props) {
             <h2 className="text-lg font-bold text-gray-900">Dette trenger du ikke endre</h2>
             <div className="flex-1 h-px bg-gray-100" />
           </div>
-          <div className="rounded-2xl bg-blue-50 border border-blue-100 p-5">
+          <div className="rounded-2xl bg-emerald-50 border border-emerald-100 p-5">
             <ul className="space-y-2.5">
               {result.no_change_needed.map((item, i) => (
-                <li key={i} className="flex items-start gap-2.5 text-sm text-blue-700">
-                  <svg className="w-4 h-4 mt-0.5 flex-shrink-0 text-blue-500" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                <li key={i} className="flex items-start gap-2.5 text-sm text-emerald-700">
+                  <svg className="w-4 h-4 mt-0.5 flex-shrink-0 text-emerald-500" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
                   {item}
