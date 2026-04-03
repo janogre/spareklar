@@ -52,7 +52,7 @@ describe("InputForm analytics", () => {
     fireEvent.submit(textarea.closest("form")!);
 
     await waitFor(() => {
-      expect(mockTrack).toHaveBeenCalledWith("report_generated", { input_type: "text" });
+      expect(mockTrack).toHaveBeenCalledWith("report_generated", { input_type: "text", account_count: 1 });
       expect(mockTrack).toHaveBeenCalledWith("input_type", { type: "text" });
     });
   });

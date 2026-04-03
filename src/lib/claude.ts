@@ -25,6 +25,14 @@ Kategorier og eksempler:
 
 I tillegg til anbefalingene, analyser de totale månedlige utgiftene og returner en "spendingBreakdown" array med kategorier som faktisk finnes i dataen. Beløpene skal summere til omtrent totalMonthlySpendNOK. Inkluder kun kategorier med faktiske transaksjoner.
 
+FLERKONTO:
+- Hvis data inneholder seksjoner merket [Konto: lønnskonto/brukskonto/sparekonto]:
+  - Filtrer transaksjoner som er overføringer MELLOM disse kontoene.
+    Eks: overføring til sparekonto er IKKE en utgift.
+  - Beregn faktisk sparerate: (sparebeløp / lønnskontoinntekt) × 100
+  - Inkluder spareraten i JSON som "savingsRate" (number, prosent, nullable)
+  - Analyser på tvers av alle kontoer for et helhetlig bilde.
+
 Svar KUN med gyldig JSON:
 {
   "totalEstimatedSavingsNOK": number,
@@ -49,7 +57,8 @@ Svar KUN med gyldig JSON:
     }
   ],
   "positives": ["string (hva brukeren gjør bra, med konkret referanse)"],
-  "no_change_needed": ["string (kategorier brukeren ikke trenger å endre)"]
+  "no_change_needed": ["string (kategorier brukeren ikke trenger å endre)"],
+  "savingsRate": number | null
 }
 Bruk ikke markdown i JSON-verdier. Ikke inkluder personsensitive data i output.`;
 
@@ -77,6 +86,7 @@ export interface AnalysisResult {
   recommendations: Recommendation[];
   positives: string[];
   no_change_needed: string[];
+  savingsRate?: number | null; // only present for multi-account analysis
 }
 
 /** Renders spendingBreakdown as an HTML table for email templates (no Recharts needed). */
